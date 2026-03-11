@@ -19,23 +19,24 @@ websocketd (tail -f) ──WS──▶ Browser
 ## Install
 
 ```bash
-git clone <this-repo> /opt/ffmpeg-webhook
+apt install -y git
+git clone https://github.com/Deulfi/ffmpeg-webhook /opt/ffmpeg-webhook
 cd /opt/ffmpeg-webhook
 ./install.sh
 
-The installer will ask you to edit .env (set DOWNLOAD_DIR).
+The installer prompts you to edit .env (set DOWNLOAD_DIR).
 MPV client setup
 
-Copy the script:
+Copy client/ffmpeg_webhook.lua to your MPV scripts folder:
 
 OS	Path
 Linux	~/.config/mpv/scripts/ffmpeg_webhook.lua
 Windows	%APPDATA%\mpv\scripts\ffmpeg_webhook.lua
 
-Edit WEBHOOK_URL at the top:
+Edit WEBHOOK_URL at the top of the file:
 
 lua
-local WEBHOOK_URL = "http://192.168.x.x:9000/hooks/download-stream"
+local WEBHOOK_URL = "http://<server>:9000/hooks/download-stream"
 
 Keybind — add to input.conf:
 
@@ -48,31 +49,33 @@ button:ffmpeg_webhook
 Usage
 
     Play a stream in MPV
-    Ctrl+D (or click the download button)
-    Confirm/edit filename
+    Ctrl+D (or click the uosc download button)
+    Confirm/edit the filename
     Watch progress at http://<server>:8080/
 
 Update
 
+Just rerun the installer:
+
 bash
-/opt/ffmpeg-webhook/update.sh
+/opt/ffmpeg-webhook/install.sh
 
 Updates system packages, ffmpeg-progress-yield, websocketd, clears logs, restarts services.
 Config
 
 .env:
 
-Var	Default	
+Var	Default	Purpose
 WEBHOOK_PORT	9000	webhook listen port
 WEBSOCKET_PORT	8080	dashboard + websocket port
-DOWNLOAD_DIR	—	where files end up
+DOWNLOAD_DIR	—	where files land
 LOG_FILE	/tmp/ffmpeg_progress/debug.log	ffmpeg stderr / exceptions
 
 Debugging
 
 bash
 tail -f /tmp/ffmpeg_progress/debug.log   # ffmpeg errors
-tail -f /tmp/ffmpeg_progress/jobs.log    # raw progress stream
+tail -f /tmp/ffmpeg_progress/jobs.log    # raw progress stream (name|percent)
 journalctl -fu webhook
 journalctl -fu websocketd
 
@@ -80,16 +83,15 @@ File overview
 
 /opt/ffmpeg-webhook/
 ├── .env                          your config (gitignored)
+├── .env.example
 ├── config/
 │   ├── webhook.conf              webhook endpoint definition
 │   ├── webhook.service           systemd unit (overrides distro unit)
 │   └── websocketd.service        systemd unit
 ├── scripts/
-│   ├── download-stream.sh        webhook → this
+│   ├── download-stream.sh        webhook entrypoint
 │   ├── ffmpeg-progress.py        runs ffmpeg, writes progress
 │   └── ws-progress.sh            tail -f for websocketd
 ├── web/index.html                dashboard
 ├── client/ffmpeg_webhook.lua     MPV script
-├── install.sh
-└── update.sh
-
+└── install.sh                    install + update
