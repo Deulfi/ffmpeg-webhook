@@ -1,8 +1,12 @@
 # ffmpeg-webhook
 
-Trigger stream downloads from MPV via webhook, watch progress live in the browser.
+Personal project - I have no idea what I'm doing, and this exists so I don't forget how it works.
 
-Built for a Proxmox LXC, works on any Debian/Ubuntu.
+When I'm watching something in MPV and want to keep it, I'd rather download it directly to my server where it belongs, instead of downloading to my PC and moving it over. Other download tools exist, but some streams only work well with ffmpeg - and if it plays in MPV, chances are ffmpeg can grab it too.
+
+Since ffmpeg isn't really a download manager and not exactly fast, there's a small web dashboard (via websocketd) that shows whether a download actually started, how far along it is, and if it finished. Don't expect too much from it - it's just there so you're not staring into the void wondering if anything is happening.
+
+Runs on a Debian LXC on Proxmox. Should work on any Debian/Ubuntu.
 
 ## How it works
 
