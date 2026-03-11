@@ -1,0 +1,13 @@
+[Unit]
+Description=websocketd ffmpeg progress
+After=network.target
+
+[Service]
+EnvironmentFile=/opt/ffmpeg-webhook/.env
+ExecStartPre=/bin/bash -c 'mkdir -p /tmp/ffmpeg_progress && touch /tmp/ffmpeg_progress/jobs.log'
+ExecStart=/usr/local/bin/websocketd --port=${WEBSOCKET_PORT} --staticdir=/opt/ffmpeg-webhook/web /opt/ffmpeg-webhook/scripts/ws-progress.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

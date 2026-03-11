@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="https://ffmpeg.org/favicon.ico">
+    <meta charset="UTF-8">
+    <title>Downloads</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            color: #eee;
+            font-family: monospace;
+            padding: 20px;
+        }
+        h1 { color: #0f3460; }
+        #no-jobs { color: #666; }
+        button {
+            margin-bottom: 15px;
+            padding: 8px 16px;
+            background: #0f3460;
+            color: #eee;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #16213e; }
+        .job {
+            margin: 10px 0;
+            padding: 10px;
+            background: #16213e;
+            border-radius: 6px;
+        }
+        .job-name { margin-bottom: 5px; }
+        .bar-container {
+            background: #0f3460;
+            border-radius: 4px;
+            height: 24px;
+            width: 100%;
+        }
+        .bar {
+            background: #666;
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            font-size: 12px;
+        }
+        .done .bar  { background: #4ecca3; }
+        .error .bar { background: #ff6b6b; }
+    </style>
+</head>
+<body>
+    <h1>FFmpeg Downloads</h1>
+    <button onclick="clearFinished()">Erledigte entfernen</button>
+    <div id="jobs"></div>
+    <div id="no-jobs">Keine aktiven Downloads.</div>
+
+    <script>
+        const jobs = {};
+        const jobsDiv = document.getElementById('jobs');
+        const noJobs  = document.getElementById('no-jobs');
+
+        const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`);
+
+        ws.onmessage = function(event) {
+            const line = event.data.trim();
+            if (!line) return;
+            const [name, value] = line.split('|');
+            if (!name || !value) return;
+            jobs[name] = value === 'done' || value === 'error' ? value : parseFloat(value);
+            render();
+        };
+
+        ws.onclose = function() {
+            setTimeout(() => location.reload(), 3000);
+        };
+
+        function clearFinished() {
+            Object.keys(jobs).forEach(name => {
+                if (jobs[name] === 'done' || jobs[name] === 'error') {
+                    delete jobs[name];
+                    const el = document.getElementById('job-' + name);
+                    if (el) el.remove();
+                }
+            });
+            render();
+        }
+
+        function render() {
+            const entries = Object.entries(jobs);
+            noJobs.style.display = entries.length ? 'none' : 'block';
+
+            entries.forEach(([name, value]) => {
+                let el = document.getElementById('job-' + name);
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = 'job-' + name;
+                    el.className = 'job';
+                    jobsDiv.appendChild(el);
+                }
+
+                if (value === 'done') {
+                    el.className = 'job done';
+                    el.innerHTML = `
+                        <div class="job-name">${name}</div>
+                        <div class="bar-container">
+                            <div class="bar" style="width:100%">Fertig ✓</div>
+                        </div>`;
+                } else if (value === 'error') {
+                    el.className = 'job error';
+                    el.innerHTML = `
+                        <div class="job-name">${name}</div>
+                        <div class="bar-container">
+                            <div class="bar" style="width:100%">Fehler ✗</div>
+                        </div>`;
+                } else {
+                    el.className = 'job';
+                    el.innerHTML = `
+                        <div class="job-name">${name}</div>
+                        <div class="bar-container">
+                            <div class="bar" style="width:${value}%">${value.toFixed(1)}%</div>
+                        </div>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

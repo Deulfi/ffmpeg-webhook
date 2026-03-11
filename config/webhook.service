@@ -1,0 +1,13 @@
+[Unit]
+Description=Webhook receiver for ffmpeg downloads
+Documentation=https://github.com/adnanh/webhook/
+After=network.target
+
+[Service]
+EnvironmentFile=/opt/ffmpeg-webhook/.env
+ExecStart=/usr/bin/webhook -nopanic -port ${WEBHOOK_PORT} -hooks /opt/ffmpeg-webhook/config/webhook.conf
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
