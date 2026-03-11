@@ -22,7 +22,7 @@ websocketd (tail -f) ──WS──▶ Browser
 
 ## Install
 
-```bash
+```
 apt install -y git
 git clone https://github.com/Deulfi/ffmpeg-webhook /opt/ffmpeg-webhook
 cd /opt/ffmpeg-webhook
@@ -61,9 +61,8 @@ Update
 
 Just pull and rerun the installer:
 
-bash
-git pull
 cd /opt/ffmpeg-webhook
+git pull
 ./install.sh
 
 Updates system packages, ffmpeg-progress-yield, websocketd, clears logs, restarts services.
@@ -79,7 +78,6 @@ LOG_FILE	/tmp/ffmpeg_progress/debug.log	ffmpeg stderr / exceptions
 
 Debugging
 
-bash
 tail -f /tmp/ffmpeg_progress/debug.log   # ffmpeg errors
 tail -f /tmp/ffmpeg_progress/jobs.log    # raw progress stream (name|percent)
 journalctl -fu webhook
