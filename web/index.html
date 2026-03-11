@@ -105,14 +105,14 @@
                     el.innerHTML = `
                         <div class="job-name">${name}</div>
                         <div class="bar-container">
-                            <div class="bar" style="width:100%">Fertig ✓</div>
+                            <div class="bar" style="width:100%">Done ✓</div>
                         </div>`;
                 } else if (value === 'error') {
                     el.className = 'job error';
                     el.innerHTML = `
                         <div class="job-name">${name}</div>
                         <div class="bar-container">
-                            <div class="bar" style="width:100%">Fehler ✗</div>
+                            <div class="bar" style="width:100%">Error ✗</div>
                         </div>`;
                 } else {
                     el.className = 'job';
