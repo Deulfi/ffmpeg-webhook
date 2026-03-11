@@ -59,10 +59,12 @@ Usage
 
 Update
 
-Just rerun the installer:
+Just pull and rerun the installer:
 
 bash
-/opt/ffmpeg-webhook/install.sh
+git pull
+cd /opt/ffmpeg-webhook
+./install.sh
 
 Updates system packages, ffmpeg-progress-yield, websocketd, clears logs, restarts services.
 Config
