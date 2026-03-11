@@ -34,8 +34,6 @@ fi
 echo "=== .env ==="
 if [ ! -f "$INSTALL_DIR/.env" ]; then
     cp "$INSTALL_DIR/.env.example" "$INSTALL_DIR/.env"
-    echo ">>> Edit $INSTALL_DIR/.env now <<<"
-    read -p "Press Enter when done..."
 fi
 source "$INSTALL_DIR/.env"
 
@@ -67,3 +65,6 @@ echo "webhook:               $(webhook -version 2>&1)"
 echo "ffmpeg:                $(ffmpeg -version 2>&1 | head -1)"
 echo "websocketd:            $(websocketd --version 2>&1)"
 echo "ffmpeg-progress-yield: $(pip3 show ffmpeg-progress-yield 2>/dev/null | grep Version | awk '{print $2}')"
+echo ""
+echo ">>> Set DOWNLOAD_DIR in $INSTALL_DIR/.env"
+echo ">>> (no restart needed, read on each download)"
